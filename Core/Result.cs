@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Core
+{
+    [Serializable]
+    public class Result
+    {
+        public string TaskID { get; }
+        public string ClientID { get; set; }
+        public object Data { get; }
+
+        public Result(string TaskID, object Data = null)
+        {
+            this.TaskID = TaskID;
+            this.Data = Data;
+        }
+    }
+}
