@@ -29,14 +29,8 @@ namespace Core
     }
 
     [Serializable]
-    public class UpgradeResult : Result
-    {
-        public UpgradeResult(string TaskID, object Data = null) : base(TaskID, Data) { }
-    }
-
-    [Serializable]
     public class EndConnectionResult : Result
     {
-        public EndConnectionResult() : base(null, null) { }
+        public EndConnectionResult(string TaskID) : base(TaskID, null) { }
     }
 }

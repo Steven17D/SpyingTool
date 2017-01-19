@@ -99,7 +99,7 @@ namespace Server
                     command = new UpgradeCommand(taskID, Convert.ToBase64String(File.ReadAllBytes(upgradeDllFilePath)));
                     break;
                 case "CloseConnection":
-                    command = new EndConnectionCommand();
+                    command = new EndConnectionCommand(taskID);
                     break;
                 default:
                     Console.WriteLine("Illegal command");

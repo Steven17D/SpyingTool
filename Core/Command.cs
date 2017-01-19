@@ -176,26 +176,25 @@ namespace Core
             }
             catch (Exception e)
             {
-                return new UpgradeResult(TaskID, "Failed to upgrade client: \n" + e.Message);
+                return new Result(TaskID, "Failed to upgrade client: \n" + e.Message);
             }
-            //throw new UpgradeException(TaskID);
-
+            throw new SafeCloseException(TaskID);
         }
     }
 
-    public class UpgradeException : Exception
-    {
-        public UpgradeException(string TaskID) : base(TaskID) { }
-    }
-
+    [Serializable]
     public class EndConnectionCommand : Command
     {
-        public EndConnectionCommand(string TaskID, string executionArgument) : base(TaskID, executionArgument) { }
+        public EndConnectionCommand(string TaskID) : base(TaskID, null) { }
 
         public override Result Execute()
         {
-            Environment.Exit(0);
-            return null;
+            throw new SafeCloseException(TaskID);
         }
+    }
+
+    public class SafeCloseException : Exception
+    {
+        public SafeCloseException(string TaskID) : base(TaskID) { }
     }
 }

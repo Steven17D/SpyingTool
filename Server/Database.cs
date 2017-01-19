@@ -24,15 +24,12 @@ namespace Server
                 }
                 return;
             }
-            else if (result is UpgradeResult)
+            else if (result is EndConnectionResult)
             {
-                //add to database
-                var id = result.TaskID;
+                //add to database by taskID
+                string id = result.TaskID;
                 Network.Clients.Remove(result.ClientID);
-                return;
-            }else if (result is EndConnectionResult)
-            {
-                Network.Clients.Remove(result.ClientID);
+                Console.WriteLine("Client {0} disconnected",result.ClientID);
                 return;
             }
 

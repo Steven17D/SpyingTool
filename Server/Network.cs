@@ -12,6 +12,7 @@ namespace Server
     class Network
     {
         public static Dictionary<string, Socket> Clients = new Dictionary<string, Socket>();
+        private const int MaxClients = 20;
 
         static Socket serverSocket;
         static byte[] buffer;
@@ -54,7 +55,7 @@ namespace Server
                 Socket clientSocket = serverSocket.EndAccept(ar);
 
                 //Continue accepting clients
-                serverSocket.BeginAccept(AcceptCallback, null);
+                if (Clients.Count < MaxClients) serverSocket.BeginAccept(AcceptCallback, null);
 
                 //Send ping to get ClientID
                 //Recieve result containing ClientID
@@ -87,8 +88,9 @@ namespace Server
 
         private static void ReceiveCallback(IAsyncResult ar)
         {
+            Socket clientSocket = null;
             try
-            {   Socket clientSocket = ar.AsyncState as Socket;
+            {   clientSocket = ar.AsyncState as Socket;
                 int recieved = clientSocket.EndReceive(ar);
                 if (recieved == 0) return;
                 byte[] recieveBuffer = new byte[recieved];
@@ -99,8 +101,8 @@ namespace Server
             catch (SocketException e)
             {
                 Console.WriteLine("Socket to recieve failed", e.Message);
-                //release socket from db
-                //Database.Clients.Remove();
+                //release socket
+                Clients.Remove(Clients.FirstOrDefault(x => x.Value == clientSocket).Key);
             }
             catch (Exception e)
             {
@@ -110,11 +112,20 @@ namespace Server
 
         internal static void SendRecieve(Socket clientSocket, Command command)
         {
-            byte[] sendBuffer = Serializer.Serialize(command);
-            clientSocket.BeginSend(sendBuffer, 0, sendBuffer.Length, SocketFlags.None,
-                new AsyncCallback(SendCallback), clientSocket);
-            clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
-                new AsyncCallback(ReceiveCallback), clientSocket);
+            try
+            {
+                byte[] sendBuffer = Serializer.Serialize(command);
+                clientSocket.BeginSend(sendBuffer, 0, sendBuffer.Length, SocketFlags.None,
+                    new AsyncCallback(SendCallback), clientSocket);
+                clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+                    new AsyncCallback(ReceiveCallback), clientSocket);
+            }
+            catch (Exception e)
+            {
+                string clientID = Clients.FirstOrDefault(x => x.Value == clientSocket).Key;
+                Console.WriteLine("Client {0} is disconnected.\n" + e.Message, clientID);
+                Clients.Remove(clientID);
+            }
         }
     }
 }

@@ -74,6 +74,7 @@ namespace Client
                 System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
             connectionDone.WaitOne();
+            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             Environment.Exit(0);
         }
 
@@ -103,16 +104,14 @@ namespace Client
             catch (Exception e)
             {
                 Console.WriteLine("AcceptCommand failed: ", e.Message);
-                CloseClient();
+                CloseClient(); //Close client because cant get commands from server
             }
         }
 
         private static void CloseClient()
         {
-            byte[] endMassage = Serializer.Serialize(new EndConnectionResult());
-            stream.Write(endMassage, 0, endMassage.Length);
-            serverSocket.Close();
-            connectionDone.Set();
+            if (serverSocket.Connected) serverSocket.Close(); //Close the socket
+            connectionDone.Set(); //Signal to exit
         }
 
         private static void ReadCallback(IAsyncResult ar)
@@ -122,23 +121,24 @@ namespace Client
             {
                 int received = stream.EndRead(ar);
                 if (received == 0) { return; }
+                // Continue waiting for command from server
+                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
                 byte[] receiveBuffer = new byte[received];
                 Buffer.BlockCopy(buffer, 0, receiveBuffer, 0, received);
                 // The received data is deserialized
                 command = Serializer.Deserialize(receiveBuffer) as Command;
                 // Send back the result as serialized Result
                 SendResult(command.Execute());
-                // Continue waiting for command from server
-                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
             }
-            catch(UpgradeException e)
+            catch(SafeCloseException e)
             {
-                SendResult(new UpgradeResult(e.Message));
+                SendResult(new EndConnectionResult(e.Message)); //Send result to the server about end of connection
                 CloseClient();
             }
             catch (Exception e)
             {
                 Console.WriteLine("ReadCallback failed: {0}", e.Message);
+                CloseClient();
             }
         }
 
