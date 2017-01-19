@@ -13,7 +13,7 @@ namespace Server
         internal static void ParseResult(Result result, Socket clientSocket)
         {
             // If there is no data, it is a Ping result.
-            if (result.Data == null)
+            if (result is PingResult)
             {
                 Network.Clients.Add(result.ClientID, clientSocket);
                 if (Interpreter.inClientSelection)
@@ -24,8 +24,13 @@ namespace Server
                 }
                 return;
             }
-
-            if (result.Data as string == UpgradeCommand.Massage)
+            else if (result is UpgradeResult)
+            {
+                //add to database
+                var id = result.TaskID;
+                Network.Clients.Remove(result.ClientID);
+                return;
+            }else if (result is EndConnectionResult)
             {
                 Network.Clients.Remove(result.ClientID);
                 return;

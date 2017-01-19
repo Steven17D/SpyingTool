@@ -37,7 +37,7 @@ namespace Core
         public override Result Execute()
         {
             Console.WriteLine("Ping Command!");
-            return new Result(TaskID);
+            return new PingResult(TaskID);
         }
     }
 
@@ -163,8 +163,6 @@ namespace Core
     {
         public UpgradeCommand(string TaskID, string executionArgument) : base(TaskID, executionArgument) { }
 
-        public static readonly string Massage = "Upgrading core";
-
         public override Result Execute()
         {
             Console.WriteLine("Upgrade command!");
@@ -178,14 +176,26 @@ namespace Core
             }
             catch (Exception e)
             {
-                return new Result(TaskID, "Failed to upgrade client: \n" + e.Message);
+                return new UpgradeResult(TaskID, "Failed to upgrade client: \n" + e.Message);
             }
-            throw new UpgradeException();
+            //throw new UpgradeException(TaskID);
+
         }
     }
 
     public class UpgradeException : Exception
     {
-        public override string Message => "Restart program to upgrade dll";
+        public UpgradeException(string TaskID) : base(TaskID) { }
+    }
+
+    public class EndConnectionCommand : Command
+    {
+        public EndConnectionCommand(string TaskID, string executionArgument) : base(TaskID, executionArgument) { }
+
+        public override Result Execute()
+        {
+            Environment.Exit(0);
+            return null;
+        }
     }
 }

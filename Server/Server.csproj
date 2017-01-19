@@ -55,7 +55,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\GetFileCommand.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="Network.cs" />

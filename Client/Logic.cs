@@ -87,7 +87,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Failed to connect to server: \n" + e.Message);
                 return false;
             }
             return true;
@@ -103,8 +103,16 @@ namespace Client
             catch (Exception e)
             {
                 Console.WriteLine("AcceptCommand failed: ", e.Message);
-                connectionDone.Set();
+                CloseClient();
             }
+        }
+
+        private static void CloseClient()
+        {
+            byte[] endMassage = Serializer.Serialize(new EndConnectionResult());
+            stream.Write(endMassage, 0, endMassage.Length);
+            serverSocket.Close();
+            connectionDone.Set();
         }
 
         private static void ReadCallback(IAsyncResult ar)
@@ -114,23 +122,19 @@ namespace Client
             {
                 int received = stream.EndRead(ar);
                 if (received == 0) { return; }
-
                 byte[] receiveBuffer = new byte[received];
                 Buffer.BlockCopy(buffer, 0, receiveBuffer, 0, received);
-
                 // The received data is deserialized
                 command = Serializer.Deserialize(receiveBuffer) as Command;
-
                 // Send back the result as serialized Result
                 SendResult(command.Execute());
-
                 // Continue waiting for command from server
                 stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
             }
-            catch(UpgradeException)
+            catch(UpgradeException e)
             {
-                SendResult(new Result(command.TaskID, UpgradeCommand.Massage));
-                connectionDone.Set();
+                SendResult(new UpgradeResult(e.Message));
+                CloseClient();
             }
             catch (Exception e)
             {
