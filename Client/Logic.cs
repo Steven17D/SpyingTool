@@ -70,11 +70,11 @@ namespace Client
             else
             {
                 //restart the program to try again
-                System.Threading.Thread.Sleep(5000);
+                Thread.Sleep(5000);
                 System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
             connectionDone.WaitOne();
-            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Environment.Exit(0);
         }
 
         internal static bool Connect(Configurations config)
@@ -114,9 +114,6 @@ namespace Client
             {
                 int received = stream.EndRead(ar);
                 if (received == 0) { return; }
-                
-                // Continue waiting for command from server
-                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
 
                 byte[] receiveBuffer = new byte[received];
                 Buffer.BlockCopy(buffer, 0, receiveBuffer, 0, received);
@@ -126,10 +123,13 @@ namespace Client
 
                 // Send back the result as serialized Result
                 SendResult(command.Execute());
+
+                // Continue waiting for command from server
+                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
             }
             catch(UpgradeException)
             {
-                SendResult(new Result(command.TaskID, "Upgrading core"));
+                SendResult(new Result(command.TaskID, UpgradeCommand.Massage));
                 connectionDone.Set();
             }
             catch (Exception e)

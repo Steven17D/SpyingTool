@@ -163,32 +163,23 @@ namespace Core
     {
         public UpgradeCommand(string TaskID, string executionArgument) : base(TaskID, executionArgument) { }
 
+        public static readonly string Massage = "Upgrading core";
+
         public override Result Execute()
         {
             Console.WriteLine("Upgrade command!");
-            byte[] upgradeDll = Convert.FromBase64String(executionArgument);
-            File.Create("NewCore.dll").Write(upgradeDll,0,upgradeDll.Length);
-            Thread overrideCore = new Thread(() => 
+            try
             {
-                bool canBeWriten = false;
-                FileStream coreFile = null;
-                while (!canBeWriten)
-                {
-                    Thread.Sleep(200); //wait between tries
-                    try
-                    {
-                        coreFile = File.OpenWrite("Core.dll"); //try to open core file
-                    }
-                    catch (Exception)
-                    {
-                        continue; //if failed to open core file try again
-                    }
-                    coreFile.Close(); //if success close the opened file
-                    canBeWriten = true; //end loop
-                }
-                File.Replace("NewCore.dll", "Core.dll", "Core.dll.backup", true);
-            });
-            overrideCore.Start(upgradeDll);
+                byte[] upgradeDll = Convert.FromBase64String(executionArgument);
+                //Save the new Core
+                File.Create("NewCore.dll").Write(upgradeDll, 0, upgradeDll.Length);
+                //Start process that changes the current Core dll
+                Process.Start("Updater.exe");
+            }
+            catch (Exception e)
+            {
+                return new Result(TaskID, "Failed to upgrade client: \n" + e.Message);
+            }
             throw new UpgradeException();
         }
     }

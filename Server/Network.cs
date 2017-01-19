@@ -21,7 +21,7 @@ namespace Server
             try
             {
                 serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                buffer = new byte[1024];
+                buffer = new byte[65536];
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, 8989));
                 serverSocket.Listen(0);
                 serverSocket.BeginAccept(AcceptCallback, null);

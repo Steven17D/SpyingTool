@@ -11,6 +11,8 @@ namespace Server
 {
     class Interpreter
     {
+        public static bool inClientSelection = false;
+
         public static void Start()
         {
             bool isAlive = true;
@@ -27,6 +29,7 @@ namespace Server
 
         private static Socket GetClient()
         {
+            inClientSelection = true;
             do
             {
                 Console.Clear();
@@ -34,10 +37,11 @@ namespace Server
             }
             while (!int.TryParse(GetInput("Enter a Client: "), out int clientNumber) || 
             clientNumber < 1 || clientNumber > Network.Clients.Count);
+            inClientSelection = false;
             return Network.Clients.ElementAt(--clientNumber).Value;
         }
 
-        private static void PrintClients()
+        public static void PrintClients()
         {
             int clientNumber = 0;
             Console.WriteLine("Client list:");

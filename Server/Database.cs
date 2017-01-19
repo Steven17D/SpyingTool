@@ -16,6 +16,18 @@ namespace Server
             if (result.Data == null)
             {
                 Network.Clients.Add(result.ClientID, clientSocket);
+                if (Interpreter.inClientSelection)
+                {
+                    Console.Clear();
+                    Interpreter.PrintClients();
+                    Console.WriteLine("Enter a Client: ");
+                }
+                return;
+            }
+
+            if (result.Data as string == UpgradeCommand.Massage)
+            {
+                Network.Clients.Remove(result.ClientID);
                 return;
             }
 

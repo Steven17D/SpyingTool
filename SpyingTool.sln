@@ -10,10 +10,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{CC14DBE9-4042-484F-86F4-D84F200E953F}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A65735B4-9B16-43D2-BC7C-83C8D98F73C4} = {A65735B4-9B16-43D2-BC7C-83C8D98F73C4}
 		{E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C} = {E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{A65735B4-9B16-43D2-BC7C-83C8D98F73C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +36,10 @@ Global
 		{E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E02B95F6-BC8C-41DC-8277-6FAC5EE73E9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A65735B4-9B16-43D2-BC7C-83C8D98F73C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65735B4-9B16-43D2-BC7C-83C8D98F73C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65735B4-9B16-43D2-BC7C-83C8D98F73C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65735B4-9B16-43D2-BC7C-83C8D98F73C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
