@@ -96,7 +96,7 @@ namespace Server
                 byte[] recieveBuffer = new byte[recieved];
                 Buffer.BlockCopy(buffer, 0, recieveBuffer, 0, recieved);
                 Result result = Serializer.Deserialize(recieveBuffer) as Result;
-                Database.ParseResult(result, clientSocket);
+                Database.SaveResult(result, clientSocket);
             }
             catch (SocketException e)
             {

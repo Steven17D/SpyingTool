@@ -16,7 +16,7 @@ namespace Core
     public class Command
     {
         public string TaskID { get; }
-        protected string executionArgument;
+        public string executionArgument;
         
         public Command(string TaskID, string executionArgument)
         {

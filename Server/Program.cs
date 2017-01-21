@@ -12,6 +12,7 @@ namespace Server
     {
         static void Main(string[] args)
         {
+            Database.Start();
             Network.Start();
             Interpreter.Start();
             Network.CloseAllSockets();

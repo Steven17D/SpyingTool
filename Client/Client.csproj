@@ -57,6 +57,7 @@
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{e02b95f6-bc8c-41dc-8277-6fac5ee73e9c}</Project>
       <Name>Core</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

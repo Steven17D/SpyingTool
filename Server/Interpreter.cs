@@ -19,15 +19,16 @@ namespace Server
             while (isAlive)
             {
                 Console.Clear();
-
-                
-                Network.SendRecieve(GetClient(), GetCommand());
+                string clientID = GetClient();
+                Command command = GetCommand();
+                Database.SaveCommand(clientID, command);
+                Network.SendRecieve(Network.Clients[clientID], command);
                 Console.Clear();
                 GetInput("Press ENTER to continue...");
             }
         }
 
-        private static Socket GetClient()
+        private static string GetClient()
         {
             inClientSelection = true;
             do
@@ -38,7 +39,7 @@ namespace Server
             while (!int.TryParse(GetInput("Enter a Client: "), out int clientNumber) || 
             clientNumber < 1 || clientNumber > Network.Clients.Count);
             inClientSelection = false;
-            return Network.Clients.ElementAt(--clientNumber).Value;
+            return Network.Clients.ElementAt(--clientNumber).Key;
         }
 
         public static void PrintClients()
