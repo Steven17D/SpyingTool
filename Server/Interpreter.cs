@@ -19,12 +19,11 @@ namespace Server
             while (isAlive)
             {
                 Console.Clear();
-                string clientID = GetClient();
-                Command command = GetCommand();
-                Database.SaveCommand(clientID, command);
-                Network.SendRecieve(Network.Clients[clientID], command);
+                string clientID = GetClient(); //get client from user
+                Command command = GetCommand(); //get command from user
+                Database.SaveCommand(clientID, command); //save command to database
+                Network.SendRecieve(Network.Clients[clientID], command); //send command to client
                 Console.Clear();
-                GetInput("Press ENTER to continue...");
             }
         }
 

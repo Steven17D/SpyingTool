@@ -55,38 +55,29 @@ namespace Server
             //Save the result to database by task id
             string _id = result.TaskID;
 
-            Console.WriteLine("Got result from client {0}", result.ClientID);
-
             if (result is EndConnectionResult)
             {
                 if (_id != null)
                 {
                     collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
                         Builders<Task>.Update.Set(
-                            "result", new ResultInfo(result.GetType().ToString(), new string[0])));
+                            "result", new ResultInfo(result.GetType().ToString(), new string[0]))); //save result
                 }
                 
                 Network.Clients.Remove(result.ClientID);
-                Console.WriteLine("Client {0} disconnected",result.ClientID);
                 Interpreter.RefreshClients();
                 return;
             }
             else
             {
                 string[] data = DataConverter(result.Data);
-
-                foreach (string item in data)
-                {
-                    Console.WriteLine(item);
-                }
-
                 collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
                 Builders<Task>.Update.Set(
-                    "result", new ResultInfo(result.GetType().ToString(), data)));
+                    "result", new ResultInfo(result.GetType().ToString(), data))); //save result
             }
         }
 
-        private static string[] DataConverter(object data)
+        private static string[] DataConverter(object data) //conver data to string array
         {
             if (data is byte[])
             {
@@ -105,7 +96,7 @@ namespace Server
 
         private static void HandlePingResult(Socket clientSocket, Result result)
         {
-            Network.Clients.Add(result.ClientID, clientSocket);
+            Network.Clients.Add(result.ClientID, clientSocket); //add client to list
             Interpreter.RefreshClients();
         }
     }
