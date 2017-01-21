@@ -56,7 +56,7 @@ namespace Core
                 fileList = new List<string>(Directory.GetFiles(executionArgument));
                 return new Result(TaskID, fileList);
             }
-            return new Result(TaskID, "Failed to find requested directory.\nPath: " + executionArgument);
+            return new Result(TaskID, "Failed to find requested directory.");
         }
     }
 
@@ -75,7 +75,7 @@ namespace Core
                 file = File.ReadAllBytes(executionArgument);
                 return new Result(TaskID, file);
             }
-            return new Result(TaskID,"Failed to find requested file.\nPath: " + executionArgument);
+            return new Result(TaskID,"Failed to find requested file.");
         }
     }
 

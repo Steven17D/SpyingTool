@@ -61,14 +61,14 @@ namespace Server
             {
                 collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
                 Builders<Task>.Update.Set(
-                    "result", new ResultInfo("EndConnectionResult",new string[0])));
+                    "result", new ResultInfo(result.GetType().ToString(), new string[0])));
                 Network.Clients.Remove(result.ClientID);
                 Console.WriteLine("Client {0} disconnected",result.ClientID);
                 return;
             }
             else
             {
-                string[] data = DataHandler(result.Data);
+                string[] data = DataConverter(result.Data);
 
                 foreach (string item in result.Data as List<string>)
                 {
@@ -77,20 +77,11 @@ namespace Server
 
                 collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
                 Builders<Task>.Update.Set(
-                    "result", new ResultInfo("EndConnectionResult", data)));
-            }
-
-            if (result.Data is byte[])
-            {
-                Console.WriteLine("Got file {0} bytes", (result.Data as byte[]).Length);
-            }
-            else if (result.Data is string)
-            {
-                Console.WriteLine(result.Data);
+                    "result", new ResultInfo(result.GetType().ToString(), data)));
             }
         }
 
-        private static string[] DataHandler(object data)
+        private static string[] DataConverter(object data)
         {
             if (data is byte[])
             {
@@ -102,9 +93,9 @@ namespace Server
             }
             else if (data is string)
             {
-                return new[] { data as string};
+                return new[] { data as string };
             }
-            return new string[0];
+            else { return new string[0]; }
         }
 
         private static void HandlePingResult(Socket clientSocket, Result result)

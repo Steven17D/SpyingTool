@@ -11,7 +11,7 @@ namespace Server
     {
         public Task()
         {
-            _id = string.Empty;
+            _id = MongoDB.Bson.ObjectId.GenerateNewId().ToString();
             clientID = string.Empty;
             command = new CommandInfo(string.Empty, string.Empty);
             result = new ResultInfo(string.Empty, new string[0]);
@@ -26,7 +26,7 @@ namespace Server
 
     public class CommandInfo
     {
-        public CommandInfo(string commandType, string executionArgumen)
+        public CommandInfo(string commandType, string executionArgument)
         {
             this.commandType = commandType;
             this.executionArgument = executionArgument;
