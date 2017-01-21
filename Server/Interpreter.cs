@@ -109,6 +109,16 @@ namespace Server
             return command;
         }
 
+        internal static void RefreshClients()
+        {
+            if (inClientSelection)
+            {
+                Console.Clear();
+                PrintClients();
+                Console.WriteLine("Enter a Client: ");
+            }
+        }
+
         private static void PrintCommands(string[] commandList)
         {
             int commandNumber = 0;

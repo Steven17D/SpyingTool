@@ -51,7 +51,16 @@ namespace Client
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }
-        
+
+        internal static void ForceExit()
+        {
+            if (serverSocket.Connected)
+            {
+                SendResult(new EndConnectionResult(null));
+                CloseClient();
+            }
+        }
+
         public static void Start()
         {
             //Signal to close the program
@@ -66,15 +75,15 @@ namespace Client
             if (Connect(config)) //if connected successfully
             {
                 AcceptCommands();
+                connectionDone.WaitOne();
+                System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
             else
             {
                 //restart the program to try again
-                Thread.Sleep(5000);
+                Thread.Sleep(3000);
                 System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
-            connectionDone.WaitOne();
-            System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
             Environment.Exit(0);
         }
 

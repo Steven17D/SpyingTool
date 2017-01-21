@@ -59,18 +59,23 @@ namespace Server
 
             if (result is EndConnectionResult)
             {
-                collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
-                Builders<Task>.Update.Set(
-                    "result", new ResultInfo(result.GetType().ToString(), new string[0])));
+                if (_id != null)
+                {
+                    collection.FindOneAndUpdateAsync(Builders<Task>.Filter.Eq("_id", _id),
+                        Builders<Task>.Update.Set(
+                            "result", new ResultInfo(result.GetType().ToString(), new string[0])));
+                }
+                
                 Network.Clients.Remove(result.ClientID);
                 Console.WriteLine("Client {0} disconnected",result.ClientID);
+                Interpreter.RefreshClients();
                 return;
             }
             else
             {
                 string[] data = DataConverter(result.Data);
 
-                foreach (string item in result.Data as List<string>)
+                foreach (string item in data)
                 {
                     Console.WriteLine(item);
                 }
@@ -101,12 +106,7 @@ namespace Server
         private static void HandlePingResult(Socket clientSocket, Result result)
         {
             Network.Clients.Add(result.ClientID, clientSocket);
-            if (Interpreter.inClientSelection)
-            {
-                Console.Clear();
-                Interpreter.PrintClients();
-                Console.WriteLine("Enter a Client: ");
-            }
+            Interpreter.RefreshClients();
         }
     }
 }
